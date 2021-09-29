@@ -1,0 +1,31 @@
+name = "cb_gatekeeper_cfw"
+type = "javascript"
+zone_id = ""
+account_id = ""
+route = ""
+workers_dev = true
+compatibility_date = "2021-09-25"
+
+kv_namespaces = [
+    { binding = "KV_GUILD_CACHE", preview_id = "922b9867f1ae419c970669392a8ad293", id = "b4587c28fdc9458a9fca43db8f88bd88" }
+]
+
+[build]
+command = "npm install && npm run build"
+[build.upload]
+format = "service-worker"
+
+
+
+[vars] # Production variables
+DISCORD_GUILD_ID = "690169153750958091" # Modular mayhem server
+GRAPHQL_ENDPOINT = "https://api.benderfactory.com/v1/graphql"
+
+[env.local.vars] # Local development variables
+DISCORD_GUILD_ID = "690169153750958091" # achin's test server: "889701084501803040"
+GRAPHQL_ENDPOINT = "https://api.benderfactory.com/v1/graphql"
+
+[env.local]
+kv_namespaces = [
+    { binding = "KV_GUILD_CACHE", preview_id = "922b9867f1ae419c970669392a8ad293", id = "b4587c28fdc9458a9fca43db8f88bd88" }
+]
