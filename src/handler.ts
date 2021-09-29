@@ -45,7 +45,7 @@ class DiscordAPI {
   async getGuildMember(
     guildId: string,
     userId: string,
-  ): Promise<DiscordMember> {
+  ): Promise<DiscordMember | { code: number; message: string }> {
     const res = await this.fetch(`/guilds/${guildId}/members/${userId}`)
     const data = await res.json()
     return data
@@ -64,6 +64,11 @@ const SET_ROLES = gql`
 export const router = Router()
 router.get('/check/:userId', async ({ params = {} }) => {
   if (params.userId) {
+    // make sure the userId is numeric
+    if (!params.userId.match(/^\d+$/)) {
+      return new Response('Error: Invalid userId', { status: 400 })
+    }
+
     const api = new DiscordAPI(DISCORD_BOT_TOKEN, true)
 
     // The KV_GUILD_CACHE namespace will store info on guilds, each cached for 24 hours.
@@ -92,6 +97,10 @@ router.get('/check/:userId', async ({ params = {} }) => {
     )
     console.log('member info:', member_info)
     // map guild into into names
+    if ('message' in member_info) {
+      // no such user?
+      return new Response(`Error: ${member_info.message}`, { status: 400 })
+    }
     const member_roles = member_info.roles.map((role) => role_map[role])
     console.log(member_roles)
 
